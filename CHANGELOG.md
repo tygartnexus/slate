@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Initial repository skeleton carved out of the JonsStudio validation framework.
+- Initial repository skeleton adapted from internal animation QA work.
 - `slate-ai` Python package layout with `pip install -e .` support.
 - MIT license, README, .gitignore, CI workflow scaffold.
 - Manifest schema (`slate.manifest`), verdict types (`slate.verdict`), signal definitions (`slate.signals`).

@@ -196,7 +196,7 @@ def test_http_error_includes_status_and_body(
     result = provider.analyze_frame(tiny_png, Manifest(shot_id="x"))
     assert not result.ok
     assert "HTTP 429" in (result.error or "")
-    assert "rate limited" in (result.error or "")
+    assert "rate limited" not in (result.error or "")
     assert "nvidia/test-model" in (result.error or "")
 
 

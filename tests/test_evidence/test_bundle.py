@@ -59,6 +59,7 @@ def test_build_evidence_bundle_for_core_only(
         manifest_path=manifest_path,
         frames_dir=frames_dir,
         include_thumbnails=False,
+        redact_raw_outputs=False,
     )
 
     assert "verdict.json" in files
@@ -92,12 +93,46 @@ def test_build_evidence_bundle_for_panel_verdict(
         manifest_path=manifest_path,
         frames_dir=frames_dir,
         include_thumbnails=False,
+        redact_raw_outputs=False,
     )
 
     for name in ("director", "color_grader", "animator", "audience"):
         assert f"panel/{name}.json" in files
     assert "response_quality.json" in files
     assert "panel/response_quality.json" in files
+
+
+def test_bundle_redacts_raw_outputs_by_default(
+    passing_core_verdict: Verdict,
+    manifest_path: Path,
+    frames_dir: Path,
+) -> None:
+    core = _verdict_with_analyses(passing_core_verdict)
+    personas = [
+        PersonaVerdict(
+            name=n,
+            model="claude-sonnet-4-6",
+            publish_ready=True,
+            raw_response="raw model transcript",
+        )
+        for n in ("director", "color_grader", "animator", "audience")
+    ]
+    panel = fuse(personas, slate_version="0.1.0", duration_seconds=1.0)
+    enhanced = EnhancedVerdict.from_core_and_panel(core, panel)
+
+    files = build_evidence_bundle(
+        verdict=enhanced,
+        manifest_path=manifest_path,
+        frames_dir=frames_dir,
+    )
+
+    assert "redaction.json" in files
+    assert "provider_outputs/gemma.json" not in files
+    verdict_dump = json.loads(files["verdict.json"])
+    assert (
+        verdict_dump["panel"]["per_persona"][0]["raw_response"]
+        == "[redacted]"
+    )
 
 
 def test_redacted_bundle_omits_raw_provider_outputs_and_persona_text(
@@ -157,6 +192,7 @@ def test_write_evidence_bundle_round_trips(
         manifest_path=manifest_path,
         frames_dir=frames_dir,
         include_thumbnails=True,
+        redact_raw_outputs=False,
     )
     assert bundle_path.is_file()
     assert bundle_path.stat().st_size > 0

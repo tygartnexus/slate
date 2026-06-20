@@ -473,6 +473,41 @@ def test_verify_bundle_writes_evidence_bundle(
     assert captured["redact_raw_outputs"] is True
 
 
+def test_verify_bundle_can_include_raw_outputs_for_internal_debugging(
+    monkeypatch: pytest.MonkeyPatch, frames_dir: Path, manifest_file: Path, tmp_path: Path
+) -> None:
+    monkeypatch.delenv("NVIDIA_API_KEY", raising=False)
+    verdict = _make_verdict(VerdictStatus.PASS)
+    _patch_engine(monkeypatch, verdict)
+    bundle_path = tmp_path / "evidence.tar.gz"
+    captured: dict[str, Any] = {}
+
+    def fake_write_evidence_bundle(output_path: Path, **kwargs: Any) -> Path:
+        captured.update({"output_path": output_path, **kwargs})
+        return output_path
+
+    monkeypatch.setattr(cli, "write_evidence_bundle", fake_write_evidence_bundle)
+    result = runner.invoke(
+        cli.app,
+        [
+            "verify",
+            "-f",
+            str(frames_dir),
+            "-m",
+            str(manifest_file),
+            "-p",
+            "gemma",
+            "--bundle",
+            str(bundle_path),
+            "--include-raw-outputs",
+            "-q",
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert captured["redact_raw_outputs"] is False
+
+
 def test_bundle_command_builds_bundle_from_core_verdict_json(
     monkeypatch: pytest.MonkeyPatch, frames_dir: Path, manifest_file: Path, tmp_path: Path
 ) -> None:
@@ -508,3 +543,4 @@ def test_bundle_command_builds_bundle_from_core_verdict_json(
     assert captured["manifest_path"] == manifest_file
     assert captured["frames_dir"] == frames_dir
     assert captured["include_thumbnails"] is True
+    assert captured["redact_raw_outputs"] is True

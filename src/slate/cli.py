@@ -117,10 +117,13 @@ def verify(
     redact_raw_outputs: Annotated[
         bool,
         typer.Option(
-            "--redact-raw-outputs",
-            help="Omit raw provider outputs and redact raw persona text in the bundle.",
+            "--redact-raw-outputs/--include-raw-outputs",
+            help=(
+                "Redact raw provider outputs and raw persona text in the bundle. "
+                "Use --include-raw-outputs only for internal debugging."
+            ),
         ),
-    ] = False,
+    ] = True,
     provider: Annotated[
         ProviderChoice,
         typer.Option(
@@ -344,9 +347,12 @@ def bundle(
         help="Include opt-in 256-px JPEG thumbnails in the evidence bundle.",
     ),
     redact_raw_outputs: bool = typer.Option(
-        False,
-        "--redact-raw-outputs",
-        help="Omit raw provider outputs and redact raw persona text in the bundle.",
+        True,
+        "--redact-raw-outputs/--include-raw-outputs",
+        help=(
+            "Redact raw provider outputs and raw persona text in the bundle. "
+            "Use --include-raw-outputs only for internal debugging."
+        ),
     ),
 ) -> None:
     """Build an evidence bundle from a previously-written verdict JSON."""
