@@ -55,8 +55,14 @@ dmypy.json
 .DS_Store
 
 # Local config
-.env
-.env.local
+.env*
+!.env.example
+!**/.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
 
 # Slate runtime artefacts (verdicts, evidence bundles)
 *.verdict.json

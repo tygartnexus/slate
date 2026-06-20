@@ -75,7 +75,7 @@ The CLI also prints a human-readable summary table to stderr. Pipe the JSON to `
 ```bash
 slate verify --frames ./renders/shot_42 --manifest ./shot_42.json --quiet --output verdict.json
 case $? in
-  0) echo "PASS — safe to publish" ;;
+  0) echo "PASS — configured Slate checks passed; complete human release review" ;;
   1) echo "FAIL — see verdict.json" ; exit 1 ;;
   2) echo "INDETERMINATE — provider unreachable, retry later" ; exit 2 ;;
   *) echo "Slate error" ; exit 3 ;;

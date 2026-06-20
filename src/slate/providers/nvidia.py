@@ -111,12 +111,12 @@ class NvidiaProvider:
             resp.raise_for_status()
             data = resp.json()
         except requests.HTTPError as exc:
-            detail = exc.response.text[:400] if exc.response is not None else ""
+            status_code = exc.response.status_code if exc.response is not None else "?"
             return ProviderResult(
                 self.label,
                 self.model,
                 {},
-                error=f"nvidia {self.model}: HTTP {exc.response.status_code if exc.response else '?'}: {detail}",
+                error=f"nvidia {self.model}: HTTP {status_code}",
             )
         except requests.RequestException as exc:
             return ProviderResult(self.label, self.model, {}, error=f"nvidia {self.model}: {exc}")

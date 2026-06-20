@@ -89,7 +89,7 @@ Slate never uploads frames anywhere you did not configure. Local Ollama keeps sa
 Slate is one free MIT-licensed project:
 
 - `slate verify` runs configured-provider checks and can add Panel review with `--panel`.
-- `slate bundle` builds a shareable evidence tarball with frame hashes, manifest JSON, verdict JSON, optional thumbnails, and raw-output redaction.
+- `slate bundle` builds an evidence tarball with frame hashes, manifest JSON, verdict JSON, optional thumbnails, and raw-output redaction. Remove sensitive project/customer metadata from manifests before sharing bundles externally.
 - Slate Cloud is an optional dashboard for uploaded verdict JSON, history, and detail review.
 - `slate-pro` is deprecated as a compatibility alias. New scripts should call `slate`.
 
@@ -113,7 +113,9 @@ export NVIDIA_API_KEY=replace-with-nvidia-api-key
 # meta/llama-3.2-90b-vision-instruct as cross-check by default.
 ```
 
-You pay NVIDIA directly. Slate never sees your key or your frames.
+You pay NVIDIA directly. No Slate-hosted service receives your key or frames;
+your local Slate process sends sampled frames directly to the configured
+provider.
 
 ### Anthropic Panel lane (cloud, BYO key)
 
@@ -126,7 +128,8 @@ For stricter local review, use `--panel-provider local` with Ollama. Treat local
 
 ## Project status
 
-Pre-release. v0.1 carves the validation logic out of a working production pipeline ([JonsStudio dogfood](https://github.com/jonty/jonsstudio)) and packages it for general use. See [CHANGELOG.md](CHANGELOG.md).
+Pre-release. v0.1 packages validation patterns from internal animation QA work
+for general use. See [CHANGELOG.md](CHANGELOG.md).
 
 ## Contributing
 

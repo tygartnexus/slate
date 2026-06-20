@@ -4,8 +4,10 @@ Produces a single ``.tar.gz`` that records what Slate evaluated, when, how, and
 what each VLM provider and Panel persona said. Full frame bytes are not embedded
 by default; SHA-256 hashes anchor the analyzed frames. Optional thumbnails are
 visual derivatives and should be enabled only when the bundle is safe to share.
-For external sharing, ``redact_raw_outputs`` removes raw provider-output files
-and replaces raw provider/persona fields in the verdict copy.
+Raw provider-output files and raw persona text are redacted by default. For
+internal debugging, ``redact_raw_outputs=False`` preserves those fields. The
+manifest is still included as evidence input; remove project/customer metadata
+from the manifest before sharing a bundle externally.
 
 Bundle layout::
 
@@ -105,7 +107,7 @@ def build_evidence_bundle(
     manifest_path: Path,
     frames_dir: Path,
     include_thumbnails: bool = False,
-    redact_raw_outputs: bool = False,
+    redact_raw_outputs: bool = True,
     thumbnail_px: int = DEFAULT_THUMBNAIL_PX,
     extra_metadata: dict[str, Any] | None = None,
 ) -> dict[str, bytes]:
@@ -194,7 +196,7 @@ def write_evidence_bundle(
     manifest_path: Path,
     frames_dir: Path,
     include_thumbnails: bool = False,
-    redact_raw_outputs: bool = False,
+    redact_raw_outputs: bool = True,
     thumbnail_px: int = DEFAULT_THUMBNAIL_PX,
     extra_metadata: dict[str, Any] | None = None,
 ) -> Path:
